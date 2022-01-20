@@ -1,0 +1,7 @@
+2022-01-17 19:27:57.674 -06:00 [INF] OrderID: {0} has been created
+2022-01-17 19:28:03.855 -06:00 [INF] LineItem: {0} has been created
+2022-01-20 10:24:32.822 -06:00 [INF] StoreID: {0} has been created
+2022-01-20 10:25:33.109 -06:00 [INF] ProductID: {0} has been created
+2022-01-20 10:25:42.016 -06:00 [INF] Inventory: {0} has been created
+2022-01-20 10:27:37.105 -06:00 [INF] OrderID: {0} has been created
+2022-01-20 10:27:44.536 -06:00 [INF] LineItem: {0} has been created
