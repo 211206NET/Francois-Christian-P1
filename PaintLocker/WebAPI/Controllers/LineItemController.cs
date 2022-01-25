@@ -32,20 +32,31 @@ namespace WebAPI.Controllers
 
         // POST api/<LineItemController>
         [HttpPost("{InventoryID}")]
-        public void Post(int InventoryID, int quantity, [FromBody] LineItem lineitemToAdd)
+        public ActionResult<LineItem> Post(int storeID, int InventoryID, int quantity, [FromBody] LineItem lineitemToAdd)
         {
-            _bl.addLineItem(lineitemToAdd);
-            Inventory currentInventory = _bl.searchInventory(InventoryID);
-            List<Inventory> getInventory = _bl.GetInventories();
-            int? Amount = 0;
-            foreach (Inventory searchInventory in getInventory)
+            List<Inventory> allInventory = _bl.GetInventories();
+            Inventory inventoryFound = _bl.searchInventory(InventoryID);
+       
+            if (inventoryFound.ProductID == lineitemToAdd.ProductID && inventoryFound.ProductName == lineitemToAdd.ProductName && inventoryFound.ProductPrice == lineitemToAdd.ProductPrice && inventoryFound.StoreID == storeID)
             {
-                if (searchInventory.InventoryID == currentInventory.InventoryID)
+                _bl.addLineItem(lineitemToAdd);
+                Inventory currentInventory = _bl.searchInventory(InventoryID);
+                List<Inventory> getInventory = _bl.GetInventories();
+                int? Amount = 0;
+                foreach (Inventory searchInventory in getInventory)
                 {
-                    Amount += (searchInventory.Quantity - quantity);
+                    if (searchInventory.InventoryID == currentInventory.InventoryID)
+                    {
+                        Amount += (searchInventory.Quantity - quantity);
+                    }
                 }
+                _bl.updateInventory(Amount, currentInventory);
+                return Created("Sucessfully created", lineitemToAdd);
             }
-            _bl.updateInventory(Amount, currentInventory);
+            else
+            {
+                return Conflict("LineItem not found, inputs may not match invenotory values");
+            }
         }
 
         /*
