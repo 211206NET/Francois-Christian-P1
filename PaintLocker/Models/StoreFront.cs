@@ -3,49 +3,14 @@ namespace Models;
 public class StoreFront
 {
     
-    private string? _name;
-    public String? Name
-    {
-        get => _name;
-        set 
-        {
-            Regex pattern = new Regex("^[a-zA-Z0-9 ']+$");
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new InputInvalidException("No input entered");
-            }
-            else if (!pattern.IsMatch(value))
-            {
-                throw new InputInvalidException("Store name can only have alphanumeric characters, white space, and '");
-            }
-            else 
-            {
-                this._name = value;
-            }
-        }
-    }
+    
+    [Required]
+    [RegularExpression("^[a-zA-Z0-9 ']+$", ErrorMessage = "StoreName can only have alphanumeric characters and whitespace")]
+    public String? Name {get;set;}
 
-    private string? _address;
-    public String? Address
-    {
-        get => _address;
-        set
-        {
-            Regex pattern = new Regex("^[a-zA-Z0-9 ']+$");
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                throw new InputInvalidException("No input entered");
-            }
-            else if (!pattern.IsMatch(value))
-            {
-                throw new InputInvalidException("Address can only have alphanumeric characters and whitespace");
-            }
-            else 
-            {
-                this._address = value;
-            }
-        }
-    }
+    [Required]
+    [RegularExpression("^[a-zA-Z0-9 ']+$", ErrorMessage = "StoreAddress can only have alphanumeric characters and whitespace")]
+    public String? Address {get;set;}
     public int? StoreID {get;set;}
     public List<Inventory>? Inventories{get;set;}
     public List<Order>? Orders{get;set;}

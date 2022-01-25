@@ -116,7 +116,7 @@ private IBL _bl;
                 Address = storeAddress                            
             };
             _bl.addStoreFront(newStore); 
-            Log.Information("StoreID: {0} has been created");
+            Log.Information($"StoreID: {newStore.StoreID} Store name {newStore.Name} has been created");
             Console.WriteLine($"PaintLocker {newStore.Name} created!");
         }
         catch (InputInvalidException ex)
@@ -151,7 +151,7 @@ private IBL _bl;
             Price = price
         };
         _bl.addProducts(newProduct);
-        Log.Information("ProductID: {0} has been created");
+        Log.Information($"ProductID: {newProduct.ProductID} Product name {newProduct.Name} has been created");
         Console.WriteLine($"{newProduct.Name} add to product list");
         }
         catch (InputInvalidException ex)
@@ -244,7 +244,7 @@ private IBL _bl;
                                 ProductPrice = searchProduct.Price
                             };
                             _bl.addInventory(newInventory); 
-                            Log.Information("Inventory: {0} has been created");               
+                            Log.Information($"Inventory: {newInventory.InventoryID} has been created");               
                             Console.WriteLine($"{searchProduct.Name} added");
                             }
                         }
@@ -264,11 +264,20 @@ private IBL _bl;
             switch(orderPick)
             {
                 case "1":
-                List<Order> getOrders = _bl.getOrders();
-                foreach(Order order in getOrders)
+                foreach(StoreFront store in getStores)
                 {
-                    Console.WriteLine($"Customer: {order.CustomerID} StoreID: {order.StoreID} OrderID: {order.OrderID} Total: {order.Total}");
-                }       
+                    Console.WriteLine("\n");
+                    Console.WriteLine($"StoreID: {store.StoreID} {store.Name}");
+                    foreach(Order order in store.Orders!)
+                    {
+                        Console.WriteLine($"Order: {order.OrderID}");
+                        foreach(LineItem lineItem in order.LineItems!)
+                        {
+                            Console.WriteLine($"{lineItem.ProductID} {lineItem.ProductName} X {lineItem.Quantity}");
+                        }
+                        Console.WriteLine($"{order.Total}");
+                    }
+                }    
                 break;
 
                 case "2":

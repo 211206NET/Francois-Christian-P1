@@ -32,8 +32,8 @@ public interface IRepo
     Inventory searchInventory(int? inventoryID);
     bool isDuplicate(StoreFront store);
     bool isDuplicate(Product store);
-    
-
-    
+    List<Inventory> searchStoreInventory(int? StoreID);
+    List<LineItem> searchOrderLineItem(int? OrderID);
+    Order searchOrder(int? orderID);
     
 }

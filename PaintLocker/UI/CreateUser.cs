@@ -31,6 +31,7 @@ public class CreateUser : IMenu
                         Username = createUsername,
                         Password = createPassword
                     };
+                    Log.Information($"Customer: {newCustomer.Username} has been created");
                     _bl.AddCustomer(newCustomer);
                     Console.WriteLine("Your account has been successfully created");
                     }

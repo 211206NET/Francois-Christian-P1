@@ -189,4 +189,16 @@ public class FileRepo : IRepo
     {
         throw new NotImplementedException();
     }
+    public List<Inventory> searchStoreInventory(int? storeID)
+    {
+        throw new NotImplementedException();
+    }
+    public List<LineItem> searchOrderLineItem(int? OrderID)
+    {
+        throw new NotImplementedException();
+    }
+    public Order searchOrder(int? orderID)
+    {
+        throw new NotImplementedException();
+    }
 }

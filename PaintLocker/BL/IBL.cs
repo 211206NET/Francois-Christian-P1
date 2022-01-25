@@ -28,5 +28,8 @@ public interface IBL
     StoreFront searchStoreFront(int? storeID);
     Product searchProduct(int? productID);
     Inventory searchInventory(int? inventoryID);
+    List<Inventory> searchStoreInventory(int? StoreID);
+    List<LineItem> searchOrderLineItem(int? OrderID);
+    Order searchOrder(int? orderID);
 
 }

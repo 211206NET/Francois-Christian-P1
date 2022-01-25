@@ -107,7 +107,7 @@ public class CustomerMenu : IMenu
                 Total = 0
             };           
             _bl.addOrder(newOrder); 
-            Log.Information("OrderID: {0} has been created");
+            Log.Information($"OrderID: {newOrder.OrderID} has been created");
             Order thisOrder = new Order();
             List<Order> allOrders = _bl.getOrders();
             foreach(Order searchOrder in allOrders)
@@ -171,7 +171,7 @@ public class CustomerMenu : IMenu
                             ProductPrice = currentInventory.ProductPrice
                         };
                         _bl.addLineItem(lineItem);
-                        Log.Information("LineItem: {0} has been created");
+                        Log.Information($"LineItem: {lineItem.ProductName} has been created");
                         Console.WriteLine($"{currentInventory.ProductName} added to shopping cart");                                               
                         List<Inventory> getInventory = _bl.GetInventories();                        
                         int? Amount = 0;

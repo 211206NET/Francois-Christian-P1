@@ -30,6 +30,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);
                 cmd.ExecuteNonQuery();            
             }
+            Log.Information($"Customer: {newCustomer.Username} has been created");
             connection.Close();
         }
     }
@@ -56,6 +57,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);
                 cmd.ExecuteNonQuery();            
             }
+            Log.Information($"Inventory: {newInventory.InventoryID} has been created"); 
             connection.Close();
         }
     }
@@ -82,6 +84,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);
                 cmd.ExecuteNonQuery();
             }
+            Log.Information($"LineItem: {newLineItem.ProductName} has been created");
             connection.Close();
         }
     }
@@ -102,6 +105,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);
                 cmd.ExecuteNonQuery();
             }
+            Log.Information($"OrderID: {newOrder.OrderID} has been created");
             connection.Close();
         }
     }
@@ -122,6 +126,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);          
                 cmd.ExecuteNonQuery();            
             }
+            Log.Information($"ProductID: {newProduct.ProductID} Product name {newProduct.Name} has been created");
             connection.Close();
         }
     }
@@ -140,6 +145,7 @@ private String _connectionString;
                 cmd.Parameters.Add(param);         
                 cmd.ExecuteNonQuery();            
             }
+            Log.Information($"StoreID: {newStore.StoreID} Store name {newStore.Name} has been created");
             connection.Close();
         }
     }
@@ -179,16 +185,25 @@ private String _connectionString;
     {
         List<Customer> allCustomer = new List<Customer>();
         using SqlConnection connection = new SqlConnection(_connectionString);
+
         String customerSelect = "SELECT * FROM Customer";
         String orderSelect = "SELECT * FROM Orders";
+        String lineItemSelect = "SELECT * FROM LineItem";
+
         DataSet CustomerSet = new DataSet();
         using SqlDataAdapter customerAdapter = new SqlDataAdapter(customerSelect, connection);
         using SqlDataAdapter orderAdapter = new SqlDataAdapter(orderSelect, connection);
+        using SqlDataAdapter lineitemAdapter = new SqlDataAdapter(lineItemSelect, connection);
+
         customerAdapter.Fill(CustomerSet, "Customer");
         orderAdapter.Fill(CustomerSet, "Orders");
+        lineitemAdapter.Fill(CustomerSet, "LineItem");
+
         DataTable? CustomerTable = CustomerSet.Tables["Customer"];
         DataTable? OrderTable = CustomerSet.Tables["Orders"];
-        if(CustomerTable != null && OrderTable != null)
+        DataTable? LineItemTable = CustomerSet.Tables["LineItem"];
+
+        if(CustomerTable != null)
         {
             foreach(DataRow row in CustomerTable.Rows)
             {
@@ -196,18 +211,42 @@ private String _connectionString;
                 customer.ID = (int) row["CustomerID"];
                 customer.Username = row["Username"].ToString();
                 customer.Password = row["Passcode"].ToString();
-                customer.Orders = OrderTable.AsEnumerable().Where(r => (int) r["CustomerID"] == customer.ID).Select
-                (
-                    r =>
-                    new Order
+                if(OrderTable != null)
+                {
+                    customer.Orders = OrderTable.AsEnumerable().Where(r => (int) r["CustomerID"] == customer.ID).Select
+                    (
+                        r =>
+                        new Order
+                        {
+                            OrderID = (int) r["OrderID"],
+                            Total =  (decimal) r["Total"],
+                            CustomerID = (int) r["CustomerID"],
+                            StoreID = (int) r["StoreID"]                        
+                        }
+                    )
+                    .ToList();
+                }
+                if (LineItemTable != null)
+                {
+                    foreach(Order customerOrder in customer.Orders!)
                     {
-                        OrderID = (int) r["OrderID"],
-                        Total =  (decimal) r["Total"],
-                        CustomerID = (int) r["CustomerID"],
-                        StoreID = (int) r["StoreID"]                        
+                        customerOrder.LineItems = LineItemTable.AsEnumerable().Where(r => (int) r["OrderID"] == customerOrder.OrderID).Select
+                        (
+                            r =>
+                            new LineItem
+                            {
+                                LineItemID = (int) r["LineItemID"],
+                                OrderID = (int) r["OrderID"],  
+                                ProductID = (int) r["ProductID"],
+                                ProductName = r["Name"].ToString() ?? "",
+                                ProductDescription = r["Description"].ToString() ?? "",
+                                ProductPrice = (decimal) r["Price"],
+                                Quantity = (int) r["Quantity"]
+                            }
+                        )
+                        .ToList();
                     }
-                )
-                .ToList();
+                }
                 allCustomer.Add(customer);
             }
         }       
@@ -356,20 +395,24 @@ private String _connectionString;
         String StoreFrontSelect = "SELECT * FROM StoreFront";
         String orderSelect = "SELECT * FROM Orders";
         String inventorySelect = "SELECT * FROM Inventory";
+        String lineItemSelect = "SELECT * FROM LineItem";
 
         DataSet StoreFrontSet = new DataSet();
 
         using SqlDataAdapter StoreFrontAdapter = new SqlDataAdapter(StoreFrontSelect, connection);
         using SqlDataAdapter orderAdapter = new SqlDataAdapter(orderSelect, connection);
         using SqlDataAdapter inventoryAdapter = new SqlDataAdapter(inventorySelect, connection);
+        using SqlDataAdapter lineitemAdapter = new SqlDataAdapter(lineItemSelect, connection);
 
         StoreFrontAdapter.Fill(StoreFrontSet, "StoreFront");
         orderAdapter.Fill(StoreFrontSet, "Orders");
         inventoryAdapter.Fill(StoreFrontSet, "Inventory");
+        lineitemAdapter.Fill(StoreFrontSet, "LineItem");
 
         DataTable? StoreFrontTable = StoreFrontSet.Tables["StoreFront"];
         DataTable? OrderTable = StoreFrontSet.Tables["Orders"];
         DataTable? InventoryTable = StoreFrontSet.Tables["Inventory"];
+        DataTable? LineItemTable = StoreFrontSet.Tables["LineItem"];
         if(StoreFrontTable != null)
         {
             foreach(DataRow row in StoreFrontTable.Rows)
@@ -380,35 +423,58 @@ private String _connectionString;
                 storeFront.Address = row["Address"].ToString() ?? "";
                 if (OrderTable != null)
                 {
-                storeFront.Orders = OrderTable.AsEnumerable().Where(r => (int) r["StoreID"] == storeFront.StoreID).Select
-                (
-                    r =>
-                    new Order
-                    {
-                        OrderID = (int) r["OrderID"],
-                        CustomerID = (int) r["CustomerID"],
-                        StoreID = (int) r["StoreID"],
-                        Total =  (decimal) r["Total"]
-                    }
-                )
-                .ToList();
+                    storeFront.Orders = OrderTable.AsEnumerable().Where(r => (int) r["StoreID"] == storeFront.StoreID).Select
+                    (
+                        r =>
+                        new Order
+                        {
+                            OrderID = (int) r["OrderID"],
+                            CustomerID = (int) r["CustomerID"],
+                            StoreID = (int) r["StoreID"],
+                            Total =  (decimal) r["Total"]
+                        }
+                    )
+                    .ToList();
                 }
                 if (InventoryTable != null)
-                storeFront.Inventories = InventoryTable.AsEnumerable().Where(r => (int) r["StoreID"] == storeFront.StoreID).Select
-                (
-                    r => 
-                    new Inventory
+                {
+                    storeFront.Inventories = InventoryTable.AsEnumerable().Where(r => (int) r["StoreID"] == storeFront.StoreID).Select
+                    (
+                        r => 
+                        new Inventory
+                        {
+                            InventoryID = (int) r["InventoryID"],
+                            StoreID = (int) r["StoreID"],  
+                            ProductID = (int) r["ProductID"],
+                            ProductName = r["Name"].ToString() ?? "",
+                            ProductDescription = r["Description"].ToString() ?? "",
+                            ProductPrice = (decimal) r["Price"],
+                            Quantity = (int) r["Quantity"]
+                        }                   
+                    )
+                    .ToList();
+                }
+                if (LineItemTable != null)
+                {
+                    foreach(Order storeOrder in storeFront.Orders!)
                     {
-                        InventoryID = (int) r["InventoryID"],
-                        StoreID = (int) r["StoreID"],  
-                        ProductID = (int) r["ProductID"],
-                        ProductName = r["Name"].ToString() ?? "",
-                        ProductDescription = r["Description"].ToString() ?? "",
-                        ProductPrice = (decimal) r["Price"],
-                        Quantity = (int) r["Quantity"]
-                    }                   
-                )
-                .ToList();
+                        storeOrder.LineItems = LineItemTable.AsEnumerable().Where(r => (int) r["OrderID"] == storeOrder.OrderID).Select
+                        (
+                            r =>
+                            new LineItem
+                            {
+                                LineItemID = (int) r["LineItemID"],
+                                OrderID = (int) r["OrderID"],  
+                                ProductID = (int) r["ProductID"],
+                                ProductName = r["Name"].ToString() ?? "",
+                                ProductDescription = r["Description"].ToString() ?? "",
+                                ProductPrice = (decimal) r["Price"],
+                                Quantity = (int) r["Quantity"]
+                            }
+                        )
+                        .ToList();
+                    }
+                }
                 allStoreFront.Add(storeFront);
             }
         }       
@@ -495,6 +561,26 @@ private String _connectionString;
         connection.Close();
         return store;
     }
+    public Order searchOrder(int? orderID)
+    {
+        string query = "Select * From Order Where OrderID = @orderID";
+        using SqlConnection connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using SqlCommand cmd = new SqlCommand(query, connection);
+        SqlParameter param = new SqlParameter("@OrderID", orderID);
+        cmd.Parameters.Add(param);
+        using SqlDataReader reader = cmd.ExecuteReader();
+        Order order = new Order();
+        if (reader.Read())
+        {
+            order.OrderID = reader.GetInt32(0);
+            order.Total = reader.GetDecimal(1);
+            order.CustomerID = reader.GetInt32(2);
+            order.StoreID = reader.GetInt32(3);
+        }
+        connection.Close();
+        return order;
+    }
     public Product searchProduct(int? productID)
     {
         string query = "Select * From Product Where ProductID = @productID";
@@ -517,11 +603,11 @@ private String _connectionString;
     }
     public Inventory searchInventory(int? inventoryID)
     {
-        string query = "Select * From Inventory Where InventoryID = @InventoryID";
+        string query = "Select * From Inventory Where InventoryID = @inventoryID";
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
         using SqlCommand cmd = new SqlCommand(query, connection);
-        SqlParameter param = new SqlParameter("@InventoryID", inventoryID);
+        SqlParameter param = new SqlParameter("@inventoryID", inventoryID);
         cmd.Parameters.Add(param);
         using SqlDataReader reader = cmd.ExecuteReader();
         Inventory inventory = new Inventory();
@@ -537,6 +623,68 @@ private String _connectionString;
         }
         connection.Close();
         return inventory;
+    }
+    public List<Inventory> searchStoreInventory(int? storeID)
+    {
+        List<Inventory> allInventory = new List<Inventory>();
+        using(SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            String queryTxt = "SELECT * FROM Inventory Where StoreID = @storeID";
+            using(SqlCommand cmd = new SqlCommand(queryTxt, connection))
+            {
+                SqlParameter param = new SqlParameter("@storeID", storeID);
+                cmd.Parameters.Add(param);
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        Inventory Inventory = new Inventory();
+                        Inventory.InventoryID = reader.GetInt32(0);
+                        Inventory.Quantity = reader.GetInt32(1);
+                        Inventory.ProductName = reader.GetString(2);
+                        Inventory.ProductDescription = reader.GetString(3);
+                        Inventory.ProductPrice = reader.GetDecimal(4);
+                        Inventory.ProductID = reader.GetInt32(5);
+                        Inventory.StoreID = reader.GetInt32(6);
+                        allInventory.Add(Inventory);
+                    }                    
+                }
+            }
+            connection.Close();
+        }
+        return allInventory;
+    }
+    public List<LineItem> searchOrderLineItem(int? OrderID)
+    {
+        List<LineItem> allLineItem = new List<LineItem>();
+        using(SqlConnection connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            String queryTxt = "SELECT * FROM LineItem Where OrderID = @OrderID";
+            using(SqlCommand cmd = new SqlCommand(queryTxt, connection))
+            {
+                SqlParameter param = new SqlParameter("@OrderID", OrderID);
+                cmd.Parameters.Add(param);
+                using(SqlDataReader reader = cmd.ExecuteReader())
+                {
+                    while(reader.Read())
+                    {
+                        LineItem LineItem = new LineItem();
+                        LineItem.LineItemID = reader.GetInt32(0);
+                        LineItem.Quantity = reader.GetInt32(1);
+                        LineItem.ProductName = reader.GetString(2);
+                        LineItem.ProductDescription = reader.GetString(3);
+                        LineItem.ProductPrice = reader.GetDecimal(4);
+                        LineItem.ProductID = reader.GetInt32(5);
+                        LineItem.OrderID = reader.GetInt32(6);
+                        allLineItem.Add(LineItem);
+                    }                    
+                }
+            }
+            connection.Close();
+        }
+        return allLineItem;
     }
     public bool isDuplicate(StoreFront store)
     {

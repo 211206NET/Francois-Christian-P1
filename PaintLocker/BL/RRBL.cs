@@ -139,4 +139,16 @@ public List<Product> GetProducts()
     {
         return _dl.searchInventory(inventoryID);
     }
+    public List<Inventory> searchStoreInventory(int? storeID)
+    {
+        return _dl.searchStoreInventory(storeID);
+    }
+    public List<LineItem> searchOrderLineItem(int? OrderID)
+    {
+        return _dl.searchOrderLineItem(OrderID);
+    }
+    public Order searchOrder(int? orderID)
+    {
+        return _dl.searchOrder(orderID);
+    }
 }
