@@ -32,33 +32,33 @@ public class ModelsTest
         Assert.Equal(address, testStore.Address);
     }
 
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    public void StoreShouldNotSetInvalidName(string input)
-    {
-        //Arrange
-        StoreFront testStore = new StoreFront();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testStore.Name = input);
-    }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // public void StoreShouldNotSetInvalidName(string input)
+    // {
+    //     //Arrange
+    //     StoreFront testStore = new StoreFront();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testStore.Name = input);
+    // }
 
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    public void StoreShouldNotSetInvalidAddress(string input)
-    {
-        //Arrange
-        StoreFront testStore = new StoreFront();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testStore.Address = input);
-    }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // public void StoreShouldNotSetInvalidAddress(string input)
+    // {
+    //     //Arrange
+    //     StoreFront testStore = new StoreFront();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testStore.Address = input);
+    // }
 
     [Fact]
     public void ProductShouldCreate()
@@ -87,32 +87,32 @@ public class ModelsTest
         Assert.Equal(description, testProduct.Description);
         Assert.Equal(price, testProduct.Price);
     }
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    public void ProductShouldNotSetInvalidName(string input)
-    {
-        //Arrange
-        Product testProduct = new Product();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testProduct.Name = input);
-    }
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    public void ProductShouldNotSetInvalidDescription(string input)
-    {
-        //Arrange
-        Product testProduct = new Product();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testProduct.Description = input);
-    }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // public void ProductShouldNotSetInvalidName(string input)
+    // {
+    //     //Arrange
+    //     Product testProduct = new Product();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testProduct.Name = input);
+    // }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // public void ProductShouldNotSetInvalidDescription(string input)
+    // {
+    //     //Arrange
+    //     Product testProduct = new Product();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testProduct.Description = input);
+    // }
     [Theory]
     [InlineData(-1)]
     public void ProductShouldNotSetInvalidPrice(decimal input)
@@ -144,34 +144,34 @@ public class ModelsTest
         Assert.Equal(username, testCustomer.Username);
         Assert.Equal(password, testCustomer.Password);
     }
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    [InlineData("four")]
-    [InlineData("overthecapofwordsallowed")]
-    public void CustomerShouldNotSetInvalidUsername(string input)
-    {
-        //Arrange
-        Customer testCustomer = new Customer();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testCustomer.Username = input);
-    }
-    [Theory]
-    [InlineData("     ")]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("#$%^&*@&#")]
-    [InlineData("four")]
-    [InlineData("overthecapofwordsallowed")]
-    public void CustomerShouldNotSetInvalidPassword(string input)
-    {
-        //Arrange
-        Customer testCustomer = new Customer();      
-        //Act
-        //Assert 
-        Assert.Throws<InputInvalidException>(() => testCustomer.Password = input);
-    }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // [InlineData("four")]
+    // [InlineData("overthecapofwordsallowed")]
+    // public void CustomerShouldNotSetInvalidUsername(string input)
+    // {
+    //     //Arrange
+    //     Customer testCustomer = new Customer();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testCustomer.Username = input);
+    // }
+    // [Theory]
+    // [InlineData("     ")]
+    // [InlineData(null)]
+    // [InlineData("")]
+    // [InlineData("#$%^&*@&#")]
+    // [InlineData("four")]
+    // [InlineData("overthecapofwordsallowed")]
+    // public void CustomerShouldNotSetInvalidPassword(string input)
+    // {
+    //     //Arrange
+    //     Customer testCustomer = new Customer();      
+    //     //Act
+    //     //Assert 
+    //     Assert.Throws<InputInvalidException>(() => testCustomer.Password = input);
+    // }
 }
