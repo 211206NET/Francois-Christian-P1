@@ -567,7 +567,7 @@ private String _connectionString;
         using SqlConnection connection = new SqlConnection(_connectionString);
         connection.Open();
         using SqlCommand cmd = new SqlCommand(query, connection);
-        SqlParameter param = new SqlParameter("@OrderID", orderID);
+        SqlParameter param = new SqlParameter("@orderID", orderID);
         cmd.Parameters.Add(param);
         using SqlDataReader reader = cmd.ExecuteReader();
         Order order = new Order();
