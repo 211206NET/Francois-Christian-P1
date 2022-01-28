@@ -27,9 +27,9 @@ namespace WebAPI.Controllers
         /*
         // GET api/<CustomerController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public ActionResult<Customer> Get(int id)
         {
-            return "value";
+            
         }
         */
 
